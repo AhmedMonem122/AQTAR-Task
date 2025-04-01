@@ -9,13 +9,9 @@ export const fakeStoreServer = axios.create({
   },
 });
 
-const getBaseUrl = () => {
-  if (typeof window !== 'undefined') {
-    return window.location.origin;
-  }
-  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-};
-
 export const localServer = axios.create({
-  baseURL: getBaseUrl(),
+  baseURL: process.env.NEXT_PUBLIC_LOCAL_SERVER_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
