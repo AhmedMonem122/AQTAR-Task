@@ -1,6 +1,8 @@
 import ProductDetails from "@/components/ProductDetails/ProductDetails";
+import ProductDetailsSkeleton from "@/components/ProductDetailsSkeleton/ProductDetailsSkeleton";
 import { localServer } from "@/lib/axios-server";
 import { AxiosError } from "axios";
+import { Suspense } from "react";
 
 interface ErrorResponse {
   message: string;
@@ -22,7 +24,11 @@ const ProductDetailsPage = async ({
       data: { product },
     } = await localServer.get(`/api/products/${id}`);
 
-    return <ProductDetails {...product} />;
+    return (
+      <Suspense fallback={<ProductDetailsSkeleton />}>
+        <ProductDetails {...product} />
+      </Suspense>
+    );
   } catch (error) {
     const axiosError = error as AxiosError<ErrorResponse>;
     return (
