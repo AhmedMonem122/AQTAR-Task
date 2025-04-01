@@ -1,2 +1,16 @@
-*.config.js
 node_modules
+.next
+out
+dist
+build
+coverage
+*.config.js
+*.config.ts
+*.config.jsx
+*.config.tsx
+.eslintrc.js
+.eslintrc.json
+package.json
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
