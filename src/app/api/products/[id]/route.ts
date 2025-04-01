@@ -35,3 +35,47 @@ export const GET = async (
     });
   }
 };
+
+export const PUT = async (
+  request: Request,
+  {
+    params,
+  }: {
+    params: Promise<{
+      id: string;
+    }>;
+  }
+) => {
+  try {
+    const { id } = await params;
+    const product = await request.json();
+
+    const { data } = await fakeStoreServer.put(`/products/${id}`, product);
+
+    return new Response(
+      JSON.stringify({
+        message: "Product updated successfully",
+        product: data,
+      }),
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  } catch (error) {
+    const axiosError = error as AxiosError;
+    return new Response(
+      JSON.stringify({
+        error: axiosError.message,
+      }),
+      {
+        status: axiosError.response?.status || 500,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+  }
+};
