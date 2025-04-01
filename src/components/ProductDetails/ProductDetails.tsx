@@ -53,7 +53,7 @@ const ProductDetails = ({ id, image, title, description, price }: Product) => {
                 </svg>
                 Edit Product
               </Link>
-              <DeleteProductButton />
+              <DeleteProductButton id={id} />
             </div>
           </div>
         </div>
