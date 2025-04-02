@@ -3,26 +3,29 @@ import ProductDetailsSkeleton from "@/components/ProductDetailsSkeleton/ProductD
 import { localServer } from "@/lib/axios-server";
 import { AxiosError } from "axios";
 import { Suspense } from "react";
+import { notFound } from "next/navigation";
 
-interface ErrorResponse {
-  message: string;
-}
+// interface ErrorResponse {
+//   message: string;
+// }
 
 export const dynamic = "force-dynamic";
 
 const ProductDetailsPage = async ({
   params,
 }: {
-  params: Promise<{
+  params: {
     id: string;
-  }>;
+  };
 }) => {
-  const { id } = await params;
-
   try {
     const {
       data: { product },
-    } = await localServer.get(`/api/products/${id}`);
+    } = await localServer.get(`/api/products/${params.id}`);
+
+    if (!product) {
+      return notFound();
+    }
 
     return (
       <Suspense fallback={<ProductDetailsSkeleton />}>
@@ -30,15 +33,10 @@ const ProductDetailsPage = async ({
       </Suspense>
     );
   } catch (error) {
-    const axiosError = error as AxiosError<ErrorResponse>;
-    return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <h2 className="text-2xl font-bold text-red-600">
-          {axiosError.response?.data?.message || axiosError.message}
-        </h2>
-        <p className="mt-2 text-gray-600">Please try again later</p>
-      </div>
-    );
+    if ((error as AxiosError).response?.status === 404) {
+      return notFound();
+    }
+    throw error; // Let Next.js error boundary handle other errors
   }
 };
 
