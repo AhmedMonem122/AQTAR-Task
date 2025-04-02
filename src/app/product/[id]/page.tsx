@@ -14,14 +14,16 @@ export const dynamic = "force-dynamic";
 const ProductDetailsPage = async ({
   params,
 }: {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }) => {
+  const { id } = await params;
+
   try {
     const {
       data: { product },
-    } = await localServer.get(`/api/products/${params.id}`);
+    } = await localServer.get(`/api/products/${id}`);
 
     if (!product) {
       return notFound();
