@@ -1,10 +1,11 @@
 import AddEditProduct from "@/components/AddEditProduct/AddEditProduct";
 import { localServer } from "@/lib/axios-server";
 import { AxiosError } from "axios";
+import { notFound } from "next/navigation";
 
-interface ErrorResponse {
-  message: string;
-}
+// interface ErrorResponse {
+//   message: string;
+// }
 
 export const dynamic = "force-dynamic";
 
@@ -15,24 +16,23 @@ const EditProductPage = async ({
     id: string;
   }>;
 }) => {
-  const { id } = await params;
-
   try {
+    const { id } = await params;
+
     const {
       data: { product },
     } = await localServer.get(`/api/products/${id}`);
 
+    if (!product) {
+      return notFound();
+    }
+
     return <AddEditProduct product={product} isEditing />;
   } catch (error) {
-    const axiosError = error as AxiosError<ErrorResponse>;
-    return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <h2 className="text-2xl font-bold text-red-600">
-          {axiosError.response?.data?.message || axiosError.message}
-        </h2>
-        <p className="mt-2 text-gray-600">Please try again later</p>
-      </div>
-    );
+    if ((error as AxiosError).response?.status === 404) {
+      return notFound();
+    }
+    throw error; // Let Next.js error boundary handle other errors
   }
 };
 
